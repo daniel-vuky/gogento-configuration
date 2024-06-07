@@ -1,0 +1,1 @@
+# gogento-configuration
