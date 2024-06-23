@@ -5,14 +5,16 @@ sql:
     schema: "db/migration"
     gen:
       go:
-        package: "db"
-        out: "db/sqlc"
+        package: "storage"
+        out: "core_config/postgres/storage"
         sql_package: "pgx/v5"
         emit_json_tags: true
         emit_interface: true
         emit_empty_slices: true
         emit_params_struct_pointers: true
         emit_prepared_queries: true
+        output:
+          models: "core_config/postgres/models/core_config_model.go"
         overrides:
           - db_type: "timestamptz"
             go_type: "time.Time"
