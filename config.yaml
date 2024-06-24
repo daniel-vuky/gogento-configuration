@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+database:
+  driver: postgres
+  host: localhost
+  port: 5432
+  user: root
+  password: secret
+  dbname: gogento
+  ssl: disable
+  timezone: Asia/Bangkok

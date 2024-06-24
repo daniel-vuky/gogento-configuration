@@ -11,6 +11,17 @@ jobs:
     name: Build and analyze
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: gogento
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,10 +33,35 @@ jobs:
       - name: Install dependencies
         run: go mod download
 
+      - name: Install golang-migrate
+        run: |
+          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.0/migrate.linux-amd64.tar.gz | tar xvz
+          sudo mv migrate /usr/bin/migrate
+          which migrate
+
+      - name: Run migrations
+        run: make migrate_up
+
+      - name: Create config file
+        run: | 
+          echo '
+            server:
+              port: 8080
+            database:
+              driver: postgres
+              host: localhost
+              port: 5432
+              user: root
+              password: secret
+              dbname: gogento
+              ssl: disable
+              timezone: Asia/Bangkok
+          ' > config.yaml
+
       - name: Run tests with coverage
         run: |
           mkdir -p bin
-          go test -short -coverprofile=bin/cov.out $(go list ./... | grep -v db/)
+          go test -short -coverprofile=bin/cov.out $(go list ./... | grep -v database/)
       - uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

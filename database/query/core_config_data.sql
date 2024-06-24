@@ -5,7 +5,7 @@ Where path = $1;
 
 -- name: UpdateConfig :one
 UPDATE core_config_data
-SET value = COALESCE(sqlc.narg(value), value)
+SET value = $2
 Where path = $1
 RETURNING *;
 

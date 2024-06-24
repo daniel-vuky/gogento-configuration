@@ -6,9 +6,9 @@ start_postgres:
 create_db:
 	docker exec -it postgres16 createdb --username=root --owner=root gogento
 migrate_up:
-	migrate -path db/migration -database "$(DB_URL)" -verbose up
+	migrate -path database/migration -database "$(DB_URL)" -verbose up
 migrate_down:
-	migrate -path db/migration -database "$(DB_URL)" -verbose down
+	migrate -path database/migration -database "$(DB_URL)" -verbose down
 sqlc:
 	sqlc generate
 mock:

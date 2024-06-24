@@ -1,9 +1,9 @@
-package sqlc
+package storage
 
 import (
 	"context"
-	db "github.com/daniel-vuky/gogento-configuration/db/sqlc"
-	"github.com/daniel-vuky/gogento-configuration/util"
+	"github.com/daniel-vuky/gogento-configuration/core_config/postgres/models"
+	"github.com/daniel-vuky/gogento-configuration/pkg/utils"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -14,8 +14,8 @@ import (
 func compareConfig(
 	t *testing.T,
 	err error,
-	fromConfig *db.CoreConfigDatum,
-	targetConfig *db.CoreConfigDatum,
+	fromConfig *models.CoreConfigModel,
+	targetConfig *models.CoreConfigModel,
 ) {
 	require.NoError(t, err)
 	require.NotEmpty(t, fromConfig)
@@ -26,16 +26,16 @@ func compareConfig(
 
 // CreateRandomConfig
 // Test the CreateConfig function
-func CreateRandomConfig(t *testing.T) db.CoreConfigDatum {
-	arg := &db.CreateConfigParams{
-		Path: util.RandomString(10),
+func CreateRandomConfig(t *testing.T) models.CoreConfigModel {
+	arg := &models.CreateConfigParams{
+		Path: utils.RandomString(10),
 		Value: pgtype.Text{
-			String: util.RandomString(10),
+			String: utils.RandomString(10),
 			Valid:  true,
 		},
 	}
-	config, err := testStore.CreateConfig(context.Background(), arg)
-	compareConfig(t, err, &db.CoreConfigDatum{
+	config, err := postgresRepository.Create(context.Background(), arg)
+	compareConfig(t, err, &models.CoreConfigModel{
 		Path:  arg.Path,
 		Value: arg.Value,
 	}, &config)
@@ -54,14 +54,14 @@ func TestCreateConfig(t *testing.T) {
 // Test the CreateConfig function
 func TestCreateConfigValueEmpty(t *testing.T) {
 	// Path empty case
-	arg := &db.CreateConfigParams{
+	arg := &models.CreateConfigParams{
 		Path: "",
 		Value: pgtype.Text{
-			String: util.RandomString(10),
+			String: utils.RandomString(10),
 			Valid:  true,
 		},
 	}
-	config, err := testStore.CreateConfig(context.Background(), arg)
+	config, err := postgresRepository.Create(context.Background(), arg)
 	require.Error(t, err)
 	require.Empty(t, config)
 }
@@ -70,7 +70,7 @@ func TestCreateConfigValueEmpty(t *testing.T) {
 // Test the CreateConfig function
 func TestDeleteConfig(t *testing.T) {
 	randomConfig := CreateRandomConfig(t)
-	deletedConfig, err := testStore.DeleteConfig(context.Background(), randomConfig.Path)
+	deletedConfig, err := postgresRepository.Delete(context.Background(), randomConfig.Path)
 	compareConfig(t, err, &randomConfig, &deletedConfig)
 }
 
@@ -78,7 +78,7 @@ func TestDeleteConfig(t *testing.T) {
 // Test the GetConfig function
 func TestGetConfig(t *testing.T) {
 	randomConfig := CreateRandomConfig(t)
-	config, err := testStore.GetConfig(context.Background(), randomConfig.Path)
+	config, err := postgresRepository.Get(context.Background(), randomConfig.Path)
 	compareConfig(t, err, &randomConfig, &config)
 }
 
@@ -86,14 +86,14 @@ func TestGetConfig(t *testing.T) {
 // Test the UpdateConfig function
 func TestUpdateConfig(t *testing.T) {
 	randomConfig := CreateRandomConfig(t)
-	arg := &db.UpdateConfigParams{
+	arg := &models.UpdateConfigParams{
 		Path: randomConfig.Path,
 		Value: pgtype.Text{
-			String: util.RandomString(12),
+			String: utils.RandomString(12),
 			Valid:  true,
 		},
 	}
-	config, err := testStore.UpdateConfig(context.Background(), arg)
+	config, err := postgresRepository.Update(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, config)
 	require.Equal(t, arg.Path, config.Path)
