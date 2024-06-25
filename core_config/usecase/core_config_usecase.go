@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"github.com/daniel-vuky/gogento-configuration/core_config/postgres/models"
+	"github.com/daniel-vuky/gogento-configuration/core_config/models"
 )
 
 type Reader interface {

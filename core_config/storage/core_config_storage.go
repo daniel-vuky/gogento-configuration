@@ -2,7 +2,7 @@ package storage
 
 import (
 	"context"
-	"github.com/daniel-vuky/gogento-configuration/core_config/postgres/models"
+	"github.com/daniel-vuky/gogento-configuration/core_config/models"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

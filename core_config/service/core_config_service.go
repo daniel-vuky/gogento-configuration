@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"github.com/daniel-vuky/gogento-configuration/core_config/postgres/models"
-	"github.com/daniel-vuky/gogento-configuration/core_config/postgres/repository"
+	"github.com/daniel-vuky/gogento-configuration/core_config/models"
+	"github.com/daniel-vuky/gogento-configuration/core_config/repository"
 )
 
 type Service struct {
