@@ -12,7 +12,7 @@ import (
 var postgresRepository *PostgresCoreConfigRepository
 
 func TestMain(m *testing.M) {
-	loadedConfig, err := config.LoadConfig("../../../")
+	loadedConfig, err := config.LoadConfig("../../")
 	if err != nil {
 		log.Fatalf("cannot load configuration: %v", err)
 	}
